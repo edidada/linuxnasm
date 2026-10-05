@@ -1,0 +1,28 @@
+name: build-helloworld
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  assemble-link-run:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install nasm
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nasm
+          nasm -v
+
+      - name: Assemble (elf32)
+        run: nasm -f elf32 HelloWorld.s -o HelloWorld.o
+
+      - name: Link (i386)
+        run: ld -m elf_i386 HelloWorld.o -o HelloWorld.out
+
+      - name: Run
+        run: ./HelloWorld.out
